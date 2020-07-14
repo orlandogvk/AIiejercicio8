@@ -18,8 +18,8 @@ componentDidMount(){
   let  url = 'https://academlo-api-users.herokuapp.com/users'
   fetch(url)
   .then(response => response.json())   //Regresa una promesa para poder transformar/interpretar esos datos en formato json
-  //.then(data => console.log(data))
-  .then(data => this.setState({ users : data })) //Respuesta de la petición que ya podremos manejar con javascript
+  //.then(data => console.log(data.data))
+  .then(data => this.setState({ users : data.data })) //Respuesta de la petición que ya podremos manejar con javascript
   .catch(error => console.log(error));  
 }
 
@@ -73,7 +73,7 @@ updateUser=event=>{
 
   render(){
     const { users } = this.state;
-   
+    if(users.length>0){
       return (
         <div>
               <Users
@@ -83,21 +83,23 @@ updateUser=event=>{
                 update={this.updateUser}
               />
               <div>
-              {console.log(users.data)}
-                {/*{users.map((user)=>{
+                {users.map((user,index)=>{
                     return (
-                      <div key={user.index}>
+                      <div key={index}>
                         <p>{user.name}</p>
                         <p>{user.lastname}</p>
                         <p>{user.email}</p>
                         <p>{user.password}</p>
                       </div>
                     );
-                  })}*/}
+                  })}
               </div>
         </div>
      );
-
+    }else{
+      return <p>Cargando usuario...</p>
+    }
+      
   }
 }
 
