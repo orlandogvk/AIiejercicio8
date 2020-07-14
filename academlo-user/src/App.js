@@ -43,10 +43,9 @@ addUser = event => {
   })
     .then(response => response.json())
     .then(results => console.log(results))
-    .then(results=>alert(results.data.message))
     .catch(error => console.log(error));
 
-    
+    alert(this.state.users.message);
 };
 
 handleInput = event => {
@@ -76,19 +75,7 @@ updateUser = event =>{
   .catch(error => console.log(error));
 }
 
-
-  render(){
-    const { users } = this.state;
-    if(users.length>0){
-      return (
-        <div>
-              <Users
-                title="Registro de usuarios" 
-                input={this.handleInput} 
-                newUser={this.addUser}
-                update={this.updateUser}
-              />
-              <div>
+/**   <div>
                 {users.map((user,index)=>{
                     return (
                       <div className="Data" key={index} >
@@ -101,7 +88,45 @@ updateUser = event =>{
                       </div>
                     );
                   })}
-              </div>
+              </div> */
+
+  render(){
+    const { users } = this.state;
+    if(users.length>0){
+      return (
+        <div>
+              <Users
+                title="Registro de usuarios" 
+                input={this.handleInput} 
+                newUser={this.addUser}
+              />
+              <table className="table">
+                  <thead>
+                    <tr>
+                      <th>Nombre</th>
+                      <th>Apellido</th>
+                      <th>Email</th>
+                      <th>Contraseña</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                      {users.map((user,index)=>{
+                        return (
+                          <tr key={index} >
+                            <td>{user.name}</td>
+                            <td>{user.lastname}</td>
+                            <td>{user.email}</td>
+                            <td>{user.password}</td>
+                            <td>
+                              <button >Eliminar</button>
+                              <button onClick={this.updateUser}>Editar</button>
+                            </td>
+                          </tr>
+
+                        );
+                      })}
+                  </tbody>
+              </table>
                 <div>{console.log(users)}</div>
         </div>
      );

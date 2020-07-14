@@ -10,8 +10,7 @@ export default function Users(props){
             <input name="lastname" type="text" placeholder="Apellido del usuario" />
             <input name="email" type="email" placeholder="Correo del usuario" />
             <input name="password" type="text" placeholder="Clave del usuario" />
-            <button onClick={props.update}>Actualizar</button>
-            <input type="submit" />
+            <input type="submit" value="Agregar"/>
         </form>
     </div>
     );
