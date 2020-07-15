@@ -75,21 +75,6 @@ updateUser = event =>{
   .catch(error => console.log(error));
 }
 
-/**   <div>
-                {users.map((user,index)=>{
-                    return (
-                      <div className="Data" key={index} >
-                        <div className="itemName">
-                        <p><strong>Nombre: </strong>{user.name}</p>
-                        <p><strong>Apellido: </strong>{user.lastname}</p>
-                        <p><strong>Email: </strong>{user.email}</p>
-                        <p><strong>Contraseña: </strong> {user.password}</p>
-                        </div>
-                      </div>
-                    );
-                  })}
-              </div> */
-
   render(){
     const { users } = this.state;
     if(users.length>0){
@@ -118,11 +103,10 @@ updateUser = event =>{
                             <td>{user.email}</td>
                             <td>{user.password}</td>
                             <td>
-                              <button >Eliminar</button>
                               <button onClick={this.updateUser}>Editar</button>
+                              <button >Eliminar</button>
                             </td>
                           </tr>
-
                         );
                       })}
                   </tbody>
@@ -131,7 +115,7 @@ updateUser = event =>{
         </div>
      );
     }else{
-      return <p>Cargando usuario...</p>
+      return <p>Cargando registro de usuarios...</p>
     }
       
   }
