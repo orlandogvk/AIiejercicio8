@@ -23,6 +23,7 @@ componentDidMount(){
 }
 
 addUser = event => {
+  console.log(event.target)
   event.preventDefault();
   //Agregar un post
   let  url = ' https://academlo-api-users.herokuapp.com/users '
@@ -55,17 +56,11 @@ handleInput = event => {
 updateUser = event =>{
   //Actualizar cambio
   let  url = ' https://academlo-api-users.herokuapp.com/users '
-  let content = {
-    name: event.target.name.value,
-    lastname: event.target.lastname.value,
-    email: event.target.email.value,
-    password: event.target.password.value,
+  let id=event.target.id
 
-  };
-  
-  fetch(url, {
-    method: 'PUT',
-    body: JSON.stringify(content),
+  fetch(`${url}${id}`, {
+    method:'PUT',
+    body: JSON.stringify(),
     headers: {
       "Content-type": "application/json; charset=UTF-8"
     }
@@ -73,6 +68,23 @@ updateUser = event =>{
   .then(response => response.json())
   .then(json => console.log(json))
   .catch(error => console.log(error));
+}
+
+deleteUser=event=>{
+  //let  url = ' https://academlo-api-users.herokuapp.com/users '
+  let el = event.target
+  let id = el.dataset.id
+  let index = el.dataset.index
+
+  fetch(`https://academlo-api-users.herokuapp.com/users/${index}`, {
+      method: 'DELETE'
+  })
+   .catch(err => console.error(err))
+   .then(() => {
+      let users = this.state.users
+      users.splice(index, 1)
+      this.setState({ users })
+   })
 }
 
   render(){
@@ -104,7 +116,7 @@ updateUser = event =>{
                             <td>{user.password}</td>
                             <td>
                               <button onClick={this.updateUser}>Editar</button>
-                              <button >Eliminar</button>
+                              <button onClick={this.deleteUser}>Eliminar</button>
                             </td>
                           </tr>
                         );
