@@ -1,6 +1,12 @@
 import React,{Component} from 'react';
 import './App.css';
 import Users from './component/Users.jsx';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import Button from 'react-bootstrap/Button';
+import Card from 'react-bootstrap/Card';
+import Row from 'react-bootstrap/Row';
+import Container from 'react-bootstrap/Container';
+
 
 class App extends Component{
   constructor(props){
@@ -13,47 +19,59 @@ class App extends Component{
 
 //Se ejecuta cuando se renderiza este componente
 componentDidMount(){
-  //Primer argumento -> url de la petición que queremos realizar
+  this.obtenerDatos();
+}
+
+obtenerDatos = () => {
+   //Primer argumento -> url de la petición que queremos realizar
   //Segundo argumento -> opciones para la petición (headers, body, method)
   let  url = 'https://academlo-api-users.herokuapp.com/users'
   fetch(url)
   .then(response => response.json())   //Regresa una promesa para poder transformar/interpretar esos datos en formato json
-  .then(data => this.setState({ users : data.data })) //Respuesta de la petición que ya podremos manejar con javascript
+  .then(data => {
+    this.setState({ users : data.data })
+    }) //Respuesta de la petición que ya podremos manejar con javascript
   .catch(error => console.log(error));  
 }
 
+
 addUser = event => {
-  console.log(event.target)
-  event.preventDefault();
-  //Agregar un post
-  let  url = ' https://academlo-api-users.herokuapp.com/users '
-  let content = {
-    name: event.target.name.value,
-    lastname: event.target.lastname.value,
-    email: event.target.email.value,
-    password: event.target.password.value,
 
-  };
-  
-  fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json; charset=UTF-8"
-    },
-    body: JSON.stringify(content)
-  })
-    .then(response => response.json())
-    .then(results => console.log(results))
-    .catch(error => console.log(error));
-
-    alert(this.state.users.message);
+    if(event.target.name.value!=="" && event.target.lastname.value !=="" && event.target.email.value!=="" && event.target.password.value!==""){
+      event.preventDefault();
+      //Agregar una petición POST
+        let  url = ' https://academlo-api-users.herokuapp.com/users '
+        let content = {
+          name: event.target.name.value,
+          lastname: event.target.lastname.value,
+          email: event.target.email.value,
+          password: event.target.password.value,
+        };
+        let form=event.target;
+        fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json; charset=UTF-8"
+          },
+          body: JSON.stringify(content)
+        })
+          .then(response => response.json())
+          .then(results => {console.log(results);
+          alert("Registro asignado con éxito");
+          this.obtenerDatos();
+          })
+          .catch(error => console.log(error));
+          form.reset();
+    }else{
+      alert("Falta información en el formulario");
+    } 
 };
 
 handleInput = event => {
   this.setState({ [event.target.name]: event.target.value });
 };
 
-updateUser = event =>{
+/*updateUser = (id) =>{
   //Actualizar cambio
   let  url = ' https://academlo-api-users.herokuapp.com/users '
   let id=event.target.id
@@ -69,27 +87,30 @@ updateUser = event =>{
   .then(json => console.log(json))
   .catch(error => console.log(error));
 }
+*/
 
-deleteUser=event=>{
-  //let  url = ' https://academlo-api-users.herokuapp.com/users '
-  let el = event.target
-  let id = el.dataset.id
-  let index = el.dataset.index
 
-  fetch(`https://academlo-api-users.herokuapp.com/users/${index}`, {
-      method: 'DELETE'
-  })
-   .catch(err => console.error(err))
-   .then(() => {
-      let users = this.state.users
-      users.splice(index, 1)
-      this.setState({ users })
-   })
+deleteUser=(id)=>{
+   if(window.confirm('Esta seguro?')){
+         let  url = ' https://academlo-api-users.herokuapp.com/users '
+        fetch(`${url}${id}`, {
+            method: 'DELETE'
+        })
+        .catch(err => console.error(err))
+        .then(() => {
+            let copyUser=[...this.state.users]
+            let updatedCopy = copyUser.filter(item=>item.id !== id)
+            this.setState({ users:updatedCopy })
+            alert("Registro eliminado con éxito");
+        })
+   }
+
+ 
 }
 
   render(){
     const { users } = this.state;
-    if(users.length>0){
+    if(users.length>=0){
       return (
         <div>
               <Users
@@ -97,32 +118,59 @@ deleteUser=event=>{
                 input={this.handleInput} 
                 newUser={this.addUser}
               />
-              <table className="table">
+         {/** <table className="table">
                   <thead>
                     <tr>
                       <th>Nombre</th>
                       <th>Apellido</th>
                       <th>Email</th>
                       <th>Contraseña</th>
+                      <th>Acciones</th>
                     </tr>
                   </thead>
                   <tbody>
-                      {users.map((user,index)=>{
+                      {users.map((user)=>{
                         return (
-                          <tr key={index} >
+                          <tr key={user.id}>
                             <td>{user.name}</td>
                             <td>{user.lastname}</td>
                             <td>{user.email}</td>
                             <td>{user.password}</td>
                             <td>
-                              <button onClick={this.updateUser}>Editar</button>
-                              <button onClick={this.deleteUser}>Eliminar</button>
+                              <Button variant="outline-primary" onClick={()=>this.deleteUser(user.id)}>Eliminar</Button>
                             </td>
                           </tr>
                         );
                       })}
                   </tbody>
               </table>
+                */} 
+              <Container className="contenedor">
+                <Row>
+                      {
+                        users.map((user)=>{
+                          return(
+                            <Card style={{ width: '18rem' }} key={user.id} className="tarjeta">
+                            {/*<Card.Img variant="top" src="holder.js/100px180" >*/}
+                            <Card.Body>
+                              <Card.Title>{user.name}</Card.Title>
+                                <Card.Text>
+                                {user.lastname}
+                                </Card.Text>
+                                <Card.Text>
+                                {user.email}
+                                </Card.Text>
+                                <Card.Text>
+                                {user.password}
+                                </Card.Text>
+                                <Button variant="outline-primary" onClick={()=>this.deleteUser(user.id)}>Eliminar</Button>
+                            </Card.Body>
+                         </Card>
+                          );
+                        })
+                     }
+                </Row>
+              </Container>  
                 <div>{console.log(users)}</div>
         </div>
      );

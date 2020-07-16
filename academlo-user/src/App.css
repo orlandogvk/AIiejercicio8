@@ -7,6 +7,18 @@
   pointer-events: none;
 }
 
+.contenedor{
+  margin-top:50px;
+  display:flex;
+  align-items: center;
+  margin-right:auto;
+  margin-left: auto;
+}
+
+.contenedor .tarjeta{
+  margin:10px;
+  text-align: center;
+}
 .Data{
   display:grid;
   grid-template-columns:1fr;
