@@ -6,13 +6,14 @@ import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import Row from 'react-bootstrap/Row';
 import Container from 'react-bootstrap/Container';
-
+import EditUser from './component/EditUser'
 
 class App extends Component{
   constructor(props){
     super(props);
     this.state = {
-      users:[]
+      users:[],
+      userEdited:{}
     };
 
   }
@@ -71,28 +72,45 @@ handleInput = event => {
   this.setState({ [event.target.name]: event.target.value });
 };
 
-/*updateUser = (id) =>{
-  //Actualizar cambio
-  let  url = ' https://academlo-api-users.herokuapp.com/users '
-  let id=event.target.id
+handleInputEdit=event=>{
+  this.setState({
+    userEdited: {
+      ...this.state.userEdited,
+      [event.target.name]: event.target.value
+    }
+  });
+}
 
-  fetch(`${url}${id}`, {
+editUser=(user)=>{
+  this.setState({ userEdited:user })
+}
+ 
+updateUser = (event) =>{
+  //Actualizar cambio
+  event.preventDefault();
+  let  url = 'https://academlo-api-users.herokuapp.com/user/'+ this.state.userEdited.id;
+
+  fetch(url, {
     method:'PUT',
-    body: JSON.stringify(),
+    body: JSON.stringify(this.state.userEdited),
     headers: {
       "Content-type": "application/json; charset=UTF-8"
     }
   })
   .then(response => response.json())
-  .then(json => console.log(json))
+  .then((results)=>{
+    console.log(results)
+    alert("Registro actualizado con éxito");
+    this.obtenerDatos();
+  })
   .catch(error => console.log(error));
 }
-*/
+
 
 
 deleteUser=(id)=>{
    if(window.confirm('Esta seguro?')){
-         let  url = ' https://academlo-api-users.herokuapp.com/users '
+         let  url = ' https://academlo-api-users.herokuapp.com/user/ '
         fetch(`${url}${id}`, {
             method: 'DELETE'
         })
@@ -105,7 +123,6 @@ deleteUser=(id)=>{
         })
    }
 
- 
 }
 
   render(){
@@ -118,33 +135,13 @@ deleteUser=(id)=>{
                 input={this.handleInput} 
                 newUser={this.addUser}
               />
-         {/** <table className="table">
-                  <thead>
-                    <tr>
-                      <th>Nombre</th>
-                      <th>Apellido</th>
-                      <th>Email</th>
-                      <th>Contraseña</th>
-                      <th>Acciones</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                      {users.map((user)=>{
-                        return (
-                          <tr key={user.id}>
-                            <td>{user.name}</td>
-                            <td>{user.lastname}</td>
-                            <td>{user.email}</td>
-                            <td>{user.password}</td>
-                            <td>
-                              <Button variant="outline-primary" onClick={()=>this.deleteUser(user.id)}>Eliminar</Button>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                  </tbody>
-              </table>
-                */} 
+              <EditUser
+                 title="Actualización de usuarios" 
+                 editInput={this.handleInputEdit} 
+                 updateUser={this.updateUser}
+                 user={this.state.userEdited}
+              />
+        
               <Container className="contenedor">
                 <Row>
                       {
@@ -163,7 +160,9 @@ deleteUser=(id)=>{
                                 <Card.Text>
                                 {user.password}
                                 </Card.Text>
+                                <Button variant="outline-primary" onClick={()=>this.editUser(user)}>Editar</Button>
                                 <Button variant="outline-primary" onClick={()=>this.deleteUser(user.id)}>Eliminar</Button>
+                        
                             </Card.Body>
                          </Card>
                           );
